@@ -34,7 +34,7 @@ class RNNDiscriminator(tf.keras.Model):
         self.num_units = num_units
 
         self.emb_layer = layers.Embedding(self.num_labels, 32)
-        self.lstm = layers.CuDNNGRU(
+        self.lstm = layers.LSTM(
             self.num_units, return_sequences=True, return_state=True)
         self.fc_out = layers.Dense(self.num_labels+1)
 
@@ -55,18 +55,18 @@ class ClassModel(tf.keras.Model):
         self.num_feats = num_feats
         self.num_labels = num_labels
         self.num_units = num_units
-        self.lstm = layers.CuDNNGRU(
+        self.lstm = layers.LSTM(
             self.num_units, return_sequences=True, return_state=True)
-        self.lstm2 = layers.CuDNNGRU(
+        self.lstm2 = layers.LSTM(
             self.num_units, return_sequences=True, return_state=True)
-        self.lstm3 = layers.CuDNNGRU(
+        self.lstm3 = layers.LSTM(
             self.num_units, return_sequences=True, return_state=True)
         self.fc = layers.Dense(self.num_labels, activation=None)
 
     def __call__(self, x):
-        out, last_h = self.lstm(x)
-        out, last_h = self.lstm2(out)
-        out, last_h = self.lstm3(out)
+        out, last_h, three = self.lstm(x)
+        out, last_h, three = self.lstm2(out)
+        out, last_h, three = self.lstm3(out)
         out = self.fc(out[:, -1, :])
         return out
 
@@ -100,7 +100,7 @@ class RNNEncoder(tf.keras.Model):
         self.rnn_units = rnn_units
         self.z_dim = z_dim
         self.bidirectional = bidirectional
-        self.gru = layers.CuDNNGRU(
+        self.gru = layers.LSTM(
             self.rnn_units, return_state=True, return_sequences=True)
         if self.bidirectional:
             self.gru = layers.Bidirectional(
@@ -140,11 +140,11 @@ class RNNDecoder(tf.keras.Model):
         self.rnn_units = rnn_units
         self.num_feats = num_feats
         self.num_labels = num_labels
-        self.gru1 = layers.CuDNNGRU(
+        self.gru1 = layers.LSTM(
             self.rnn_units, return_state=True, return_sequences=True)
-        self.gru2 = layers.CuDNNGRU(
+        self.gru2 = layers.LSTM(
             self.rnn_units, return_state=True, return_sequences=True)
-        self.gru3 = layers.CuDNNGRU(
+        self.gru3 = layers.LSTM(
             self.rnn_units, return_state=True, return_sequences=True)
         self.fc_out = layers.Dense(self.num_feats)
         self.label_emb = layers.Embedding(self.num_labels, 6)
