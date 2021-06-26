@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
     fixed_sampling_batch = 3
     fixed_sampling_size = fixed_sampling_batch*metadata.num_labels
-    fixed_sampling_z = tf.random_normal(
+    fixed_sampling_z = tf.random.normal(
         shape=(fixed_sampling_size, g_model.z_dim))
     fixed_sampling_labels = tf.tile(tf.range(metadata.num_labels), [
         fixed_sampling_batch])
